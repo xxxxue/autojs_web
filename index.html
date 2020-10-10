@@ -91,7 +91,7 @@
     // vueObj.testClick();
 
     /**
-     * 测试 ec调用web
+     * 测试 aj调用web
      * @param data
      * @param callBack
      */
@@ -104,7 +104,7 @@
       //测试toast
       layToast("layTo");
 
-      //调用 ec 发送callback
+      //调用 aj 发送callback
       callAJ(callBack, "callback嘿嘿嘿嘿");
     }
 
@@ -127,9 +127,9 @@
      * @param {string} functionName 方法名
      * @param {any} arrParam 参数
      * 单个参数直接传
-     * web: getAj ("getUserName",1)           aj: function getUserName(p1) { return p1+1;}
+     * web: callAJ ("getUserName",1)           aj: function getUserName(p1) { return p1+1;}
      * 多个参数建议用数组
-     * web : getAj ("getUserName",[1,3,4])    aj: function getUserName([p1,p2,p3]) { return p1+p2+p3; }
+     * web : callAJ ("getUserName",[1,3,4])    aj: function getUserName([p1,p2,p3]) { return p1+p2+p3; }
      */
     function callAJ(functionName, arrParam) {
       let res = undefined;
