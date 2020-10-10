@@ -12,7 +12,7 @@ importClass(android.webkit.WebResourceResponse);
 importClass(android.webkit.WebViewClient);
 importClass(android.webkit.WebSettings);
 ui.layout(
-  '<ScrollView w="*" h="*"><webview id="web" h="*" w="*"  /></ScrollView>'
+  '<webview id="web" h="*" w="*"  />'
 );
 
 let web = ui.web;
@@ -91,11 +91,22 @@ function ajToast(msg) {
 /**
  * 用来测试 web 调用 aj
  */
-function getName([index, name, age]) {
+function ajFun([index, name, age]) {
   console.log("方法参数: ", index, name, age);
 
-  //测试 aj调用web
-  runJsFunction("pushLog", ["我是1", "我是2", "我是3"]);
+  //测试 aj调用web    (web方法名,[[参数],回调函数名])
+  runJsFunction("pushLog", [["返回值1", "返回值2", "返回值3"],"ajFuncCallback"]);
 
-  return index + name + age;
+
+ let data= [
+  {id: 1, name: "小明1", address: "北京1"},
+  {id: 2, name: "小明2", address: "北京2"},
+  {id: 3, name: "小明3", address: "北京3"}
+ ]
+
+  //return index + name + age;
+  return JSON.stringify(data);
+}
+function ajFuncCallback(data) {  
+  console.log("接收到web的回调 :", data)
 }
