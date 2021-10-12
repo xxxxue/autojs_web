@@ -1,170 +1,246 @@
 <!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>aj_web</title>
-    <style>
-      html,body
-     {
-        margin: 0;
-        padding: 0;
-        overflow:scroll;
-      }
+<html lang="zh">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>autojs-web</title>
 
-      body {
-        background-image: url("https://ss2.bdstatic.com/70cFvnSh_Q1YnxGkpoWK1HF6hhy/it/u=1513587864,3620818218&fm=26&gp=0.jpg");
-        /* background-position: center; */
-        background-size: cover;
-      }
+        <!-- 重置浏览器默认样式 -->
+        <link
+            href="https://cdn.bootcdn.net/ajax/libs/normalize/8.0.1/normalize.min.css"
+            rel="stylesheet"
+        />
+        <!-- vant css -->
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vant@3.2.5/lib/index.css" />
 
-      /*等 页面 和 js 全部加载完再显示body*/
-      body {
-        display: none;
+        <style>
+            body {
+                background-color: #f7f8fa;
+            }
+            .loading {
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%); /*向左向上分别平移自身的一半*/
+                -webkit-transform: translate(-50%, -50%);
+                -moz-transform: translate(-50%, -50%);
+                text-align: center;
+                transition: 1s;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="loading" class="loading">软件加载中...</div>
+        <div id="app" style="display: none">
+            <div>
+                <div v-show="tabbarActive=='home'">
+                    <h1>home</h1>
 
-        width: 100%;
-        height: 100%;
-        /* background: yellow; */
-        position: absolute;
-      }
-    </style>
-  </head>
-  <body>
-    <div id="app">
-      <button @click="testClick()">测试按钮</button>
-      <ul>
-        <li v-for="item in dataList" v-bind:key="item.id">序号: {{item.id}} 名字: {{item.name}} 地址: {{item.address}}</li>
-      </ul>
+                    <van-cell-group inset>
+                        <van-field
+                            v-model="demoValues.v1"
+                            label="文本1"
+                            placeholder="请输入用户名"
+                        />
+                    </van-cell-group>
+                    <div style="margin: 16px">
+                        <van-button round block type="primary" @click="testClick">
+                            点我!!
+                        </van-button>
+                    </div>
+                    <van-popup
+                        v-model:show="popopShow"
+                        round
+                        position="top"
+                        :style="{ height: '30%',paddingBottom:'20px' }"
+                    >
+                        <van-list>
+                            <van-cell
+                                center
+                                v-for="item in dataList"
+                                :key="item.id"
+                                :title="item.name"
+                                :value="item.address"
+                                :label="item.id"
+                            />
+                        </van-list>
+                    </van-popup>
 
-      <ul>
-        <li v-for="item in ecMsgList">{{item}}</li>
-      </ul>
-    </div>
-  </body>
+                    <h5 v-for="item in msgList">{{item}}</h5>
+                </div>
+                <div v-show="tabbarActive=='search'">
+                    <h1>search</h1>
+                    <van-cell-group inset>
+                        <van-field
+                            v-model="demoValues.v2"
+                            label="文本2"
+                            placeholder="请输入用户名"
+                        />
+                    </van-cell-group>
+                </div>
+                <div v-show="tabbarActive=='friends'">
+                    <h1>friends</h1>
+                    <van-cell-group inset>
+                        <van-field
+                            v-model="demoValues.v3"
+                            label="文本3"
+                            placeholder="请输入用户名"
+                        />
+                    </van-cell-group>
+                </div>
+                <div v-show="tabbarActive=='setting'">
+                    <h1>setting</h1>
+                    <van-cell-group inset>
+                        <van-field
+                            v-model="demoValues.v4"
+                            label="文本4"
+                            placeholder="请输入用户名"
+                        />
+                    </van-cell-group>
+                </div>
+            </div>
 
-  <!--        <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.5.1/jquery.min.js"></script>-->
-  <script src="https://cdn.bootcdn.net/ajax/libs/layui/2.5.6/layui.all.min.js"></script>
-  <script src="https://cdn.bootcss.com/vConsole/3.3.4/vconsole.min.js"></script>
-  <script src="https://cdn.bootcdn.net/ajax/libs/vue/3.0.0/vue.global.js"></script>
+            <van-tabbar
+                v-model="tabbarActive"
+                @change="tabbarOnChange"
+                active-color="#ee0a24"
+                inactive-color="#000"
+            >
+                <van-tabbar-item name="home" icon="home-o">首页</van-tabbar-item>
+                <van-tabbar-item name="search" icon="search">发现</van-tabbar-item>
+                <van-tabbar-item name="friends" icon="friends-o">朋友圈</van-tabbar-item>
+                <van-tabbar-item name="setting" icon="setting-o">设置</van-tabbar-item>
+            </van-tabbar>
+        </div>
+    </body>
 
-  <script>
-    let vConsole = new VConsole();
-    //console.time('foo');    // 启动名为 foo 的计时器
-    //console.timeEnd('foo'); // 停止 foo 计时器并输出经过的时间
+    <!-- 引入 Vue  https://v3.cn.vuejs.org/ -->
+    <script src="https://cdn.jsdelivr.net/npm/vue@3.2.20/dist/vue.global.min.js"></script>
+    <!-- vant https://vant-contrib.gitee.io/vant/v3/#/zh-CN/home -->
+    <script src="https://cdn.jsdelivr.net/npm/vant@3.2.5/lib/vant.min.js"></script>
 
-    //初始化vue3
-    let vueObj = Vue.createApp({
-      setup() {
-        //vue3 定义属性 (双向绑定)
-        const state = Vue.reactive({
-          dataList: [],
-          ecMsgList: [],
-        });
+    <script src="https://cdn.jsdelivr.net/npm/vconsole@3.9.1/dist/vconsole.min.js"></script>
+    <script>
+        // let vConsole = new VConsole();
+        //console.time('foo');    // 启动名为 foo 的计时器
+        //console.timeEnd('foo'); // 停止 foo 计时器并输出经过的时间
 
-        //vue3 定义方法
-        function testClick() {
-          let data = callAJ("ajFun", ["我是web", 2, 34]);
-          console.log("我是aj返回值",data);
-          state.dataList = JSON.parse(data);
-          //vConsole.show(); // 显示vconsole
-        }
+        //初始化vue3
+        let vueObj = Vue.createApp({
+            setup() {
+                //vue3 定义属性 (双向绑定)
+                const state = Vue.reactive({
+                    demoValues: {
+                        v1: '',
+                        v2: '',
+                        v3: '',
+                        v4: '',
+                    },
+                    tabbarActive: 'home',
+                    popopShow: false,
+                    dataList: [],
+                    msgList: [],
+                });
 
-        return {
-          ...Vue.toRefs(state),
-          testClick,
+                //vue3 定义方法
+                let testClick = () => {
+                    vant.Toast('我是vant轻提示');
+                    state.popopShow = true;
+
+                    let data = callAJ('ajFun', ['我是web', 2, 34]);
+                    console.log('我是aj返回值', data);
+                    state.dataList = JSON.parse(data);
+                };
+
+                let tabbarOnChange = (itemName) => {
+                    vant.Toast(itemName);
+                    state.tabbarActive = itemName;
+                };
+                Vue.onMounted(() => {
+                    // 延时2秒, 为了演示, 使用时请删除setTimeout
+                    setTimeout(() => {
+                        loaded();
+                    }, 2000);
+                });
+
+                return {
+                    ...Vue.toRefs(state),
+                    testClick,
+                    tabbarOnChange,
+                };
+            },
+        })
+            .use(vant) // 注册vant组件
+            .use(vant.Lazyload)
+            .mount('#app'); //挂载到 id='app'
+
+        let loaded = () => {
+            //显示界面
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('app').style.display = 'block';
         };
-      },
-    }).mount("#app"); //挂载到 id='app'
 
-    console.log("vue对象: ", vueObj);
+        //------------
+        //------------
+        //------------
 
-    //测试 vue外部修改属性
-    //vueObj.dataList = [{id: 1, name: "小明1", address: "北京1"}]
+        /**
+         * 测试 aj调用web
+         * @param data
+         * @param callBack
+         */
+        let pushLog = (data, callBack) => {
+            console.log('被aj调用了,参数:', data);
 
-    //测试 vue外部定义方法
-    // vueObj.testMethod=function () {
-    //     console.log("测试vue外部定义方法")
-    // }
-    //vueObj.testMethod();
+            //测试外部 更改 属性值
+            vueObj.msgList = data;
 
-    //测试 vue外部调用内部方法
-    // vueObj.testClick();
+            //调用 aj 发送callback
+            callAJ(callBack, 'callback嘿嘿嘿嘿');
+        };
 
-    /**
-     * 测试 aj调用web
-     * @param data
-     * @param callBack
-     */
-    function pushLog(data, callBack) {
-      console.log("被aj调用了,参数:", data);
+        //#endregion
 
-      //测试外部 更改 属性值
-      vueObj.ecMsgList = data;
+        //------------
+        //------------
+        //------------
+        //#region 调用 aj
 
-      //测试toast
-      layToast("layTo");
+        /**
+         * 调用aj
+         * @param {string} functionName 方法名
+         * @param {any} arrParam 参数
+         * 单个参数直接传
+         * web: callAJ ("getUserName",1)           aj: function getUserName(p1) { return p1+1;}
+         * 多个参数建议用数组
+         * web : callAJ ("getUserName",[1,3,4])    aj: function getUserName([p1,p2,p3]) { return p1+p2+p3; }
+         */
+        let callAJ = (functionName, arrParam) => {
+            let res = undefined;
+            try {
+                res = prompt(functionName, JSON.stringify(arrParam));
+            } catch (error) {
+                alert(error);
+            }
+            return res;
+        };
 
-      //调用 aj 发送callback
-      callAJ(callBack, "callback嘿嘿嘿嘿");
-    }
+        /**
+         *  aj toast
+         * @param {any} msg
+         */
+        let ajToast = (msg) => {
+            callAJ('ajToast', msg);
+        };
 
-    //#endregion
+        /**
+         *  aj log
+         * @param {any} msg
+         */
+        let ajLog = (msg) => {
+            callAJ('log', msg);
+        };
 
-    /**
-     * 等 页面 和 js 全部加载完再显示body
-     */
-    document.addEventListener("DOMContentLoaded", function () {
-      document.body.style.display = "block";
-    });
-
-    //------------
-    //------------
-    //------------
-    //#region 调用 aj  
-
-    /**
-     * 调用java
-     * @param {string} functionName 方法名
-     * @param {any} arrParam 参数
-     * 单个参数直接传
-     * web: callAJ ("getUserName",1)           aj: function getUserName(p1) { return p1+1;}
-     * 多个参数建议用数组
-     * web : callAJ ("getUserName",[1,3,4])    aj: function getUserName([p1,p2,p3]) { return p1+p2+p3; }
-     */
-    function callAJ(functionName, arrParam) {
-      let res = undefined;
-      try {
-        res = prompt(functionName, JSON.stringify(arrParam));
-      } catch (error) {
-        layToast(error);
-      }
-      return res;
-    }
-
-    /**
-     *  html lay toast弹窗
-     * @param {any} msg
-     */
-    function layToast(msg) {
-      layer.msg(msg);
-    }
-
-    /**
-     *  aj toast
-     * @param {any} msg
-     */
-    function ajToast(msg) {
-      callAJ("ajToast", msg);
-    }
-
-    /**
-     *  aj log
-     * @param {any} msg
-     */
-    function ajLog(msg) {
-      callAJ("log", msg);
-    }
-
-    //#endregion
-  </script>
+        //#endregion
+    </script>
 </html>
