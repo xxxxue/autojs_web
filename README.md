@@ -20,11 +20,21 @@ Auto(X).js 插件会找 `根目录下的 Project.json`
 
 代码中有例子 ( vue3 + vant )，可以直接进行测试。
 
+### 一些例子和源码索引: (点击直接跳转)
 
+前端Web:
+https://github.com/xxxxue/autojs_web/blob/cdde5546e6bcec1fcc86cc7c61a8b9ec46a431d8/src/web/index.js#L46
+
+后端AJ:
+https://github.com/xxxxue/autojs_web/blob/cdde5546e6bcec1fcc86cc7c61a8b9ec46a431d8/src/main.js#L23
+
+框架AJ:
+https://github.com/xxxxue/autojs_web/blob/cdde5546e6bcec1fcc86cc7c61a8b9ec46a431d8/src/runtime/runtimeAj.js#L104
+
+框架Web:
+https://github.com/xxxxue/autojs_web/blob/cdde5546e6bcec1fcc86cc7c61a8b9ec46a431d8/src/runtime/runtimeWeb.js#L56
 
 ## 灵感来源
-
-
 
 这一套逻辑的灵感来源于 [AutoX.js 示例](https://github.com/kkevsekk1/AutoX/blob/6.2.7/app/src/main/assets/sample/Web%E6%89%A9%E5%B1%95%E4%B8%8E%E6%B8%B8%E6%88%8F%E7%BC%96%E7%A8%8B/AutoX%E6%B3%A8%E5%85%A5webview.js)
 
