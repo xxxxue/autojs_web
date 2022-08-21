@@ -10,6 +10,9 @@
 
 - v1.0 基于 `onJsPrompt` (有点简陋,，完成度比较低，不过基本功能是有的)
 
+## 适用范围
+使用 `Rhino` 引擎的 auto.js 都能用 (包括 autoX 等等)
+
 ## 使用
 
 在 VSCode 中 打开 `src` 目录，按 `Ctrl + Shift + P`，
@@ -28,7 +31,7 @@ Auto(X).js 插件会找 `根目录下的 Project.json`
 [后端AJ](https://github.com/xxxxue/autojs_web/blob/cdde5546e6bcec1fcc86cc7c61a8b9ec46a431d8/src/main.js#L23)
 
 #### 框架
-[Web](https://github.com/xxxxue/autojs_web/blob/cdde5546e6bcec1fcc86cc7c61a8b9ec46a431d8/src/runtime/runtimeWeb.js#L56)
+[Web](https://github.com/xxxxue/autojs_web/blob/cdde5546e6bcec1fcc86cc7c61a8b9ec46a431d8/src/runtime/runtimeWeb.js#L56) 
 
 [AJ](https://github.com/xxxxue/autojs_web/blob/cdde5546e6bcec1fcc86cc7c61a8b9ec46a431d8/src/runtime/runtimeAj.js#L104)
 
