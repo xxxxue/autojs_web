@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>html react</title>
+    <!-- jsx -->
+    <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+    <!-- react -->
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <!-- router -->
+    <script src="https://unpkg.com/react-router-dom@5.0.0/umd/react-router-dom.min.js"></script>
+
+    <!-- antd -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/antd@4.23.5/dist/antd.min.css" />
+    <script src="https://cdn.jsdelivr.net/npm/antd@4.23.5/dist/antd.min.js"></script>
+
+    <!-- Store -->
+    <script src="https://cdn.jsdelivr.net/npm/jotai@1.8.5/umd/index.development.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jotai@1.8.5/umd/utils.development.js"></script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="text/babel">
+
+      const { Fragment, useState, useEffect, useRef } = React;
+      const { Route, Link, HashRouter } = ReactRouterDOM;
+      const { Button, Drawer } = antd;
+      const { atom, useAtom } = jotai;
+      const { atomWithStorage } = jotaiUtils;
+
+      // 保存到 localStorage , 页面刷新,数据不丢失
+      let counterAtom = atomWithStorage("counter", 0);
+
+      let MyComponent = (props) => {
+        const [store] = useAtom(counterAtom);
+        return (
+          <div>
+            <h3>MyComponent</h3>
+            <p>{props.name}</p>
+            <p>store: {store}</p>
+            <p>{props.head("112345", "eqweq")}</p>
+            <p>{props.children}</p>
+            <Button type="primary" onClick={props.handleChildClick}>
+              childClick
+            </Button>
+          </div>
+        );
+      };
+
+      let Home = () => {
+        const [date, setDate] = useState("--");
+
+        const [store, setStore] = useAtom(counterAtom);
+
+        return (
+          <div>
+            <p>Home</p>
+            <p>{date}</p>
+            <p>store: {store}</p>
+            <Button
+              type="primary"
+              onClick={() => {
+                setStore((p) => p + 1);
+              }}
+            >
+              changeStore
+            </Button>
+
+            <MyComponent
+              name="我是 props name"
+              head={(num, str) => {
+                return (
+                  <span>
+                    我是 head 具名插槽,参数: {num} , {str}
+                  </span>
+                );
+              }}
+              handleChildClick={() => {
+                setDate(new Date().toLocaleString());
+              }}
+            >
+              我是默认插槽
+            </MyComponent>
+          </div>
+        );
+      };
+
+      let Login = () => {
+        const [open, setOpen] = useState(false);
+
+        const [store, setStore] = useAtom(counterAtom);
+
+        let handleDrawer = () => {
+          setOpen((p) => !p);
+        };
+        return (
+          <div>
+            <p>store: {store}</p>
+            <Button type="danger" onClick={handleDrawer}>
+              open
+            </Button>
+            <Drawer title="Basic Drawer" placement="right" onClose={handleDrawer} open={open}>
+              <p>Some contents...</p>
+              <p>Some contents...</p>
+              <p>Some contents...</p>
+            </Drawer>
+          </div>
+        );
+      };
+
+      let App = () => {
+        return (
+          <HashRouter>
+            <ul>
+              <li>
+                <Link to="/">Home</Link>
+              </li>
+              <li>
+                <Link to="/login">Login</Link>
+              </li>
+            </ul>
+
+            <Route path="/" exact component={Home} />
+            <Route path="/login" component={Login} />
+          </HashRouter>
+        );
+      };
+
+      // 挂载到 id="root"
+      ReactDOM.createRoot(document.getElementById("root")).render(
+        <Fragment>
+          <React.StrictMode>
+            <App />
+          </React.StrictMode>
+        </Fragment>
+      );
+    </script>
+  </body>
+</html>
