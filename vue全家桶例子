@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>html vue</title>
+
+    <!-- vue3 -->
+    <script src="https://unpkg.com/vue@3.2.41/dist/vue.global.js"></script>
+
+    <!-- router -->
+    <script src="https://unpkg.com/vue-router@4.1.5/dist/vue-router.global.js"></script>
+
+    <!-- element-plus -->
+    <link rel="stylesheet" href="https://unpkg.com/element-plus@2.2.18/dist/index.css" />
+    <script src="https://unpkg.com/element-plus@2.2.18/dist/index.full.js"></script>
+
+    <!-- pinia -->
+    <script src="https://unpkg.com/vue-demi@0.13.11/lib/index.iife.js"></script>
+    <script src="https://unpkg.com/pinia@2.0.23/dist/pinia.iife.js"></script>
+
+    <style>
+      .v-enter-active,
+      .v-leave-active {
+        transition: opacity 0.5s ease;
+      }
+
+      .v-enter-from,
+      .v-leave-to {
+        opacity: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="app">
+      <div>
+        <router-link to="/">Home</router-link>
+
+        <router-link style="margin-left: 10px" to="/about">About</router-link>
+      </div>
+
+      <router-view v-slot="{ Component }">
+        <!-- 缓存路由的数据, 切换后数据不会消失 -->
+        <keep-alive>
+          <component :is="Component" />
+        </keep-alive>
+      </router-view>
+    </div>
+
+    <!-- template 是隐藏的元素,不会在页面中显示. https://www.runoob.com/tags/tag-template.html -->
+    <template id="home">
+      <p>{{ state.msg }}</p>
+      <p>{{store.counter}} {{store.name}}</p>
+      <el-button type="primary" @click="handleClick">click</el-button>
+      <el-button type="warning" @click="handleChangeStoreData">changeStoreData</el-button>
+      <el-button type="danger" @click="handleReset">reset store</el-button>
+      <el-drawer v-model="state.drawer" title="I am the title" :with-header="false">
+        <span>Hi there!</span>
+      </el-drawer>
+    </template>
+
+    <template id="about">
+      <p>{{state.msg}}</p>
+      <p>{{store.counter}} {{store.name}}</p>
+      <el-button type="danger" @click="handleClick">click</el-button>
+      <!-- 必须使用烤串命名规则 -->
+      <my-component
+        :name="state.myComponentName"
+        :props-child-click="handleClick"
+        @emit-child-click="handleClick"
+      >
+        <template #default="data"> 我是 default slot 插槽数据-> {{data.msg}} </template>
+        <!-- <template #default>我是 default slot</template> -->
+        <template #my-slot="data"> 我是 nameSlot {{data.userName}}</template>
+      </my-component>
+    </template>
+
+    <template id="myComponent">
+      <p>myComponent</p>
+      <p>{{props.name}}</p>
+      <p>{{props.age}}</p>
+      <p>
+        <el-button type="warning" @click="props.propsChildClick">propsChildClick</el-button>
+        <el-button type="danger" @click="handleEmitChildClick">emitChildClick</el-button>
+      </p>
+      <p>
+        <!-- 要注意,数据的名称不能是 name, 
+          因为vue插槽用 name来指定具名插槽 -->
+        <slot msg="qwe443"></slot>
+      </p>
+      <p>
+        <!-- 必须是烤肉串命名规则 -->
+        <slot name="my-slot" :user-name="'插槽数据->'+props.name"></slot>
+      </p>
+    </template>
+
+    <script>
+      const { createApp, ref, onMounted, reactive, provide, inject, defineAsyncComponent } = Vue;
+      const { createPinia, defineStore } = Pinia;
+
+      // 定义 store
+      const useStore = defineStore("Store", {
+        state: () => {
+          return {
+            counter: 0,
+            name: "Eduardo",
+            isAdmin: true,
+          };
+        },
+      });
+
+      // 封装组件
+      let MyComponent = {
+        template: "#myComponent",
+        // 定义 props
+        props: {
+          name: {
+            type: String,
+            required: true,
+          },
+          age: {
+            type: Number,
+            default: 10,
+          },
+          // props 传入函数 调用父组件的相关代码
+          propsChildClick: {
+            type: Function,
+            default: () => {},
+          },
+        },
+        emits: ["emitChildClick"],
+        // 获取 props
+        setup(props, ctx) {
+          //ctx: attrs emit expose exposed slots
+
+          console.log(props, ctx);
+
+          let handleEmitChildClick = () => {
+            // 通过 emit 调用父组件的相关方法.
+            ctx.emit("emitChildClick");
+          };
+
+          return {
+            props,
+            handleEmitChildClick,
+          };
+        },
+      };
+
+      let Home = {
+        // 指定模版的 id, 也可以直接在字符串中写 html (没有智能提示)
+        template: "#home",
+        setup() {
+          let store = useStore();
+
+          let state = reactive({
+            msg: "hello",
+            drawer: false,
+          });
+
+          let handleClick = () => {
+            // 随机数
+            state.msg = "random: " + Math.ceil(Math.random() * 10);
+
+            state.drawer = true;
+            //
+            store.counter++;
+          };
+
+          let handleChangeStoreData = () => {
+            store.name = store.name + "1";
+          };
+
+          let handleReset = () => {
+            store.$reset();
+          };
+
+          // 一定要返回,否则模版中是无法访问的.
+          return {
+            state,
+            handleClick,
+            handleChangeStoreData,
+            store,
+            handleReset,
+          };
+        },
+      };
+
+      let About = {
+        template: "#about",
+        // 局部注册一下组件
+        components: {
+          MyComponent,
+        },
+        setup() {
+          let store = useStore();
+
+          let state = reactive({
+            msg: "about",
+            myComponentName: "我是 props name",
+          });
+
+          let handleClick = () => {
+            state.msg = new Date().toString();
+            state.myComponentName = state.myComponentName + "2";
+          };
+
+          return {
+            state,
+            handleClick,
+            store,
+          };
+        },
+      };
+
+      const routesList = [
+        { path: "/", component: Home },
+        { path: "/about", component: About },
+      ];
+
+      /**
+       * 初始化 vue 与 相关库
+       */
+
+      const router = VueRouter.createRouter({
+        // hash 路由
+        history: VueRouter.createWebHashHistory(),
+        // 路由配置
+        routes: routesList,
+      });
+
+      const pinia = createPinia();
+
+      // 初始化 vue
+      const app = createApp();
+
+      // 配置
+      app.use(ElementPlus);
+      app.use(router);
+      app.use(pinia);
+
+      // 挂载到 #app
+      app.mount("#app");
+    </script>
+  </body>
+</html>
