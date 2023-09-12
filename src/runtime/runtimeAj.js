@@ -70,16 +70,16 @@ function bridgeHandler_handle(cmd, args) {
   } else {
     // 调用方法
     /** @type {Function} */
-    let fun = this[cmd];
+    let fun = globalThis[cmd];
     if (!fun) {
       throw new Error("cmd= " + cmd + " 没有定义实现");
     }
 
     // 判断参数类型
     if (Array.isArray(args)) {
-      ret = fun.apply(this, args);
+      ret = fun.apply(globalThis, args);
     } else {
-      ret = fun.call(this, args);
+      ret = fun.call(globalThis, args);
     }
   }
 
