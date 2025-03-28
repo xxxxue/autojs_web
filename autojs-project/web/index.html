@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="zh">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>autojs-web</title>
+
+    <!-- 重置浏览器默认样式 -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/normalize/8.0.1/normalize.min.css"
+      rel="stylesheet"
+    />
+    <!-- vant css -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vant@3.2.5/lib/index.css" />
+
+    <style>
+      body {
+        background-color: #f7f8fa;
+      }
+      .loading {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%); /*向左向上分别平移自身的一半*/
+        -webkit-transform: translate(-50%, -50%);
+        -moz-transform: translate(-50%, -50%);
+        text-align: center;
+        transition: 1s;
+      }
+    </style>
+    <style>
+      .m-4 {
+        margin: 1rem;
+      }
+
+      .space-y-4 > :not([hidden]) ~ :not([hidden]) {
+        --tw-space-y-reverse: 0;
+        margin-top: calc(1rem * calc(1 - var(--tw-space-y-reverse)));
+        margin-bottom: calc(1rem * var(--tw-space-y-reverse));
+      }
+
+      .pb-10 {
+        padding-bottom: 2.5rem;
+      }
+      .mb-4 {
+        margin-bottom: 1rem;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="loading" class="loading">软件加载中...</div>
+    <div id="app" style="display: none">
+      <div class="m-4 pb-10">
+        <div v-show="tabbarActive=='home'">
+          <h1 class="text-2xl">home</h1>
+
+          <van-cell-group inset class="mb-4">
+            <van-field v-model="demoValues.v1" label="文本1" placeholder="请输入用户名" />
+          </van-cell-group>
+
+          <div class="space-y-4">
+            <van-button round block type="primary" @click="testClick"> 点我测试!! </van-button>
+            <van-button round block type="success" @click="checkClick"> 浏览器内核检测 </van-button>
+            <div v-if="version!=''">{{version}}</div>
+          </div>
+          <!-- 顶部 弹出层 -->
+          <van-popup v-model:show="popopShow" round position="top" :style="{ height: '30%' }">
+            <!-- 显示 对象数组 -->
+            <van-list>
+              <van-cell
+                center
+                v-for="item in dataList"
+                :key="item.id"
+                :title="item.name"
+                :value="item.address"
+                :label="item.id"
+              />
+            </van-list>
+          </van-popup>
+
+          <!-- 显示 普通字符串数组 -->
+          <h5 v-for="item in msgList">{{item}}</h5>
+        </div>
+        <div v-show="tabbarActive=='search'">
+          <h1>search</h1>
+          <van-cell-group inset>
+            <van-field v-model="demoValues.v2" label="文本2" placeholder="请输入用户名" />
+          </van-cell-group>
+        </div>
+        <div v-show="tabbarActive=='friends'">
+          <h1>friends</h1>
+          <van-cell-group inset>
+            <van-field v-model="demoValues.v3" label="文本3" placeholder="请输入用户名" />
+          </van-cell-group>
+        </div>
+        <div v-show="tabbarActive=='setting'">
+          <h1>setting</h1>
+          <van-cell-group inset>
+            <van-field v-model="demoValues.v4" label="文本4" placeholder="请输入用户名" />
+          </van-cell-group>
+        </div>
+      </div>
+
+      <van-tabbar
+        v-model="tabbarActive"
+        @change="tabbarOnChange"
+        active-color="#ee0a24"
+        inactive-color="#000"
+      >
+        <van-tabbar-item name="home" icon="home-o">首页</van-tabbar-item>
+        <van-tabbar-item name="search" icon="search">发现</van-tabbar-item>
+        <van-tabbar-item name="friends" icon="friends-o">朋友圈</van-tabbar-item>
+        <van-tabbar-item name="setting" icon="setting-o">设置</van-tabbar-item>
+      </van-tabbar>
+    </div>
+  </body>
+
+  <!-- 引入 Vue  https://v3.cn.vuejs.org/ -->
+  <script src="https://cdn.jsdelivr.net/npm/vue@3.2.20/dist/vue.global.min.js"></script>
+  <!-- vant https://vant-contrib.gitee.io/vant/v3/#/zh-CN/home -->
+  <script src="https://cdn.jsdelivr.net/npm/vant@3.2.5/lib/vant.min.js"></script>
+
+  <script src="https://cdn.jsdelivr.net/npm/vconsole@3.9.1/dist/vconsole.min.js"></script>
+
+  <script src="../runtime/runtimeWeb.jsx"></script>
+  <script src="index.jsx"></script>
+</html>
